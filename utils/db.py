@@ -5,18 +5,22 @@ DB_PATH = "tiertest.db"
 
 OWNER_ID = 253335267618848778
 
-TIERS = ["HT1", "HT2", "HT3", "LT1", "LT2", "LT3", "LT4", "LT5"]
+TIERS = ["HT1", "HT2", "HT3", "HT4", "HT5", "LT1", "LT2", "LT3", "LT4", "LT5"]
 
 TIER_COLORS = {
     "HT1": 0xFFD700,  # Gold
     "HT2": 0xFFA500,  # Orange
     "HT3": 0xFF6347,  # Tomato
+    "HT4": 0xFF4500,  # Orange Red
+    "HT5": 0xFF0000,  # Red
     "LT1": 0x1E90FF,  # Dodger Blue
     "LT2": 0x00BFFF,  # Deep Sky Blue
     "LT3": 0x7B68EE,  # Medium Slate Blue
     "LT4": 0x9370DB,  # Medium Purple
     "LT5": 0xC0C0C0,  # Silver
 }
+
+COOLDOWN_DAYS = 14  # 2 week cooldown between tests
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
