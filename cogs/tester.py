@@ -8,7 +8,7 @@ class Tester(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="addtester", description="Add a tester role to a user (SA Tester only)")
+    @app_commands.command(name="addtester", description="Add a tester role to a user (SA Tester or Admin)")
     @app_commands.describe(user="The user to promote", role="SA Tester or AS Tester")
     @app_commands.choices(role=[
         app_commands.Choice(name="SA Tester", value="sa"),
@@ -20,8 +20,10 @@ class Tester(commands.Cog):
             await interaction.response.send_message("❌ Bot not set up yet.", ephemeral=True)
             return
         sa_role = interaction.guild.get_role(int(config["sa_tester_role_id"]))
-        if not sa_role or sa_role not in interaction.user.roles:
-            await interaction.response.send_message("❌ Only SA Testers can manage tester roles.", ephemeral=True)
+        is_sa = sa_role and sa_role in interaction.user.roles
+        is_admin = interaction.user.guild_permissions.administrator
+        if not is_sa and not is_admin:
+            await interaction.response.send_message("❌ Only SA Testers or Admins can manage tester roles.", ephemeral=True)
             return
 
         if role == "sa":
@@ -41,7 +43,7 @@ class Tester(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="removetester", description="Remove a tester role from a user (SA Tester only)")
+    @app_commands.command(name="removetester", description="Remove a tester role from a user (SA Tester or Admin)")
     @app_commands.describe(user="The user to demote", role="SA Tester or AS Tester")
     @app_commands.choices(role=[
         app_commands.Choice(name="SA Tester", value="sa"),
@@ -53,8 +55,10 @@ class Tester(commands.Cog):
             await interaction.response.send_message("❌ Bot not set up yet.", ephemeral=True)
             return
         sa_role = interaction.guild.get_role(int(config["sa_tester_role_id"]))
-        if not sa_role or sa_role not in interaction.user.roles:
-            await interaction.response.send_message("❌ Only SA Testers can manage tester roles.", ephemeral=True)
+        is_sa = sa_role and sa_role in interaction.user.roles
+        is_admin = interaction.user.guild_permissions.administrator
+        if not is_sa and not is_admin:
+            await interaction.response.send_message("❌ Only SA Testers or Admins can manage tester roles.", ephemeral=True)
             return
 
         if role == "sa":
