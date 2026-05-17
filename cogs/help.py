@@ -79,7 +79,7 @@ class Help(commands.Cog):
         # Tiers
         embed.add_field(
             name="🏆 Available Tiers",
-            value="`HT1` `HT2` `HT3` *(High Tier)*  |  `LT1` `LT2` `LT3` `LT4` `LT5` *(Low Tier)*",
+            value="`HT1` `HT2` `HT3` `HT4` `HT5` *(High Tier)*  |  `LT1` `LT2` `LT3` `LT4` `LT5` *(Low Tier)*",
             inline=False
         )
 
@@ -132,3 +132,4 @@ class Help(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(Help(bot))
+
