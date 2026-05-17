@@ -145,7 +145,7 @@ class Setup(commands.Cog):
                 "Welcome to **Ranked Tests**!\n\n"
                 "Click the button below to join the queue and get your tier tested.\n\n"
                 "**Tiers Available:**\n"
-                "> 🥇 `HT1` → `HT2` → `HT3` *(High Tier)*\n"
+                "> 🥇 `HT1` → `HT2` → `HT3` → `HT4` → `HT5` *(High Tier)*\n"
                 "> 🔵 `LT1` → `LT2` → `LT3` → `LT4` → `LT5` *(Low Tier)*\n\n"
                 "**Rules:**\n"
                 "• Be honest about your skill level\n"
@@ -189,7 +189,7 @@ class QueueModal(discord.ui.Modal, title="Join Tier Test Queue"):
     )
 
     async def on_submit(self, interaction: discord.Interaction):
-        from utils.db import get_config, get_db
+        from utils.db import get_config, get_db, COOLDOWN_DAYS
         import datetime
 
         guild = interaction.guild
@@ -212,6 +212,26 @@ class QueueModal(discord.ui.Modal, title="Join Tier Test Queue"):
                 ephemeral=True
             )
             return
+
+        # Check 2-week cooldown
+        last_result = conn.execute(
+            "SELECT created_at FROM results WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT 1",
+            (str(guild.id), str(user.id))
+        ).fetchone()
+        if last_result:
+            last_tested = datetime.datetime.fromisoformat(last_result["created_at"])
+            cooldown_end = last_tested + datetime.timedelta(days=COOLDOWN_DAYS)
+            now = datetime.datetime.utcnow()
+            if now < cooldown_end:
+                remaining = cooldown_end - now
+                days = remaining.days
+                hours = remaining.seconds // 3600
+                conn.close()
+                await interaction.response.send_message(
+                    f"❌ You're on cooldown! You can requeue in **{days}d {hours}h**.",
+                    ephemeral=True
+                )
+                return
 
         # Check if already in queue
         existing = conn.execute(
@@ -302,3 +322,4 @@ async def setup(bot):
     await bot.add_cog(Setup(bot))
     # Register persistent view
     bot.add_view(QueueButton())
+
